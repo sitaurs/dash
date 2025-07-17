@@ -32,7 +32,7 @@ apiClient.interceptors.response.use(
 );
 
 // Custom hooks for API operations
-export const useBlogs = () => {
+export const useBlogs = (options = {}) => {
   return useQuery({
     queryKey: ['blogs'],
     queryFn: async () => {
@@ -40,6 +40,7 @@ export const useBlogs = () => {
       return response.data.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
   });
 };
 
