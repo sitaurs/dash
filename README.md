@@ -131,7 +131,6 @@ cd ..
 ### 3. Setup OAuth Token (One-Time)
 
 ```bash
-cd backend
 npm run generate-token
 ```
 
@@ -298,7 +297,7 @@ pm2 start ecosystem.config.js
 ### OAuth Issues
 - Pastikan Google Cloud Console dikonfigurasi dengan benar
 - Periksa redirect URI sesuai dengan konfigurasi
-- Jalankan `npm run generate-token` untuk setup ulang
+- Jalankan `npm run generate-token` (dari root proyek) untuk setup ulang
 
 ### Database Issues
 - Periksa MongoDB service: `sudo systemctl status mongodb`
@@ -355,7 +354,7 @@ Jika mengalami masalah:
 # 2. Configure .env file
 # 3. Install & Run
 npm install && cd backend && npm install && cd ..
-cd backend && npm run generate-token
+npm run generate-token
 npm run build && pm2 start ecosystem.config.js
 
 # Access: http://localhost:5173
