@@ -32,7 +32,12 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
   const { isAuthenticated } = useAuth();
 
-  const { data: blogs = [], isLoading: loading, error, refetch } = useBlogs();
+  const {
+    data: blogs = [],
+    isLoading: loading,
+    error,
+    refetch,
+  } = useBlogs({ enabled: isAuthenticated });
 
   useEffect(() => {
     if (blogs.length > 0 && !currentBlog) {
