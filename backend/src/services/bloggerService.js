@@ -21,14 +21,18 @@ class BloggerService {
   }
 
   // Generate authorization URL for OAuth flow
-  async getAuthUrl() {
-    const scopes = ['https://www.googleapis.com/auth/blogger'];
-    
+  async getAuthUrl(state = '') {
+    const scopes = [
+      'https://www.googleapis.com/auth/blogger',
+      'https://www.googleapis.com/auth/userinfo.profile'
+    ];
+
     return this.oauth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: scopes,
       prompt: 'consent', // Force consent to get refresh token
-      include_granted_scopes: true
+      include_granted_scopes: true,
+      state
     });
   }
 
