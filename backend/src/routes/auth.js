@@ -26,7 +26,7 @@ router.post('/change-password', authenticateToken, changePassword);
 router.get('/oauth/url', authenticateToken, getAuthUrl);
 
 // GET /api/admin/oauth/callback - Handle OAuth callback
-router.get('/oauth/callback', authenticateToken, handleOAuthCallback);
+router.get('/oauth/callback', handleOAuthCallback);
 
 // GET /api/admin/oauth/status - Check OAuth status
 router.get('/oauth/status', authenticateToken, getOAuthStatus);
