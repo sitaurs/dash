@@ -140,7 +140,8 @@ Ikuti instruksi script:
 - Buka URL di browser dan login ke akun Google Anda
 - Copy authorization code dari URL callback
 - Paste code ke terminal
-- Script akan menyimpan refresh token ke database
+- Script akan otomatis menyimpan refresh token ke MongoDB
+  untuk admin sesuai `ADMIN_USERNAME` pada `.env`
 
 ### 4. Cara Mendapatkan Blog ID
 
