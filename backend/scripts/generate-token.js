@@ -3,6 +3,12 @@
 require('dotenv').config();
 const { google } = require('googleapis');
 const readline = require('readline');
+const mongoose = require('mongoose');
+
+// DB utilities and models
+const connectDB = require('../src/config/database');
+const Admin = require('../src/models/Admin');
+const OAuthToken = require('../src/models/OAuthToken');
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -52,7 +58,7 @@ async function generateToken() {
   rl.question('🔑 Enter the authorization code: ', async (code) => {
     try {
       console.log('⏳ Exchanging authorization code for tokens...');
-      
+
       const { tokens } = await oauth2Client.getToken(code);
       oauth2Client.setCredentials(tokens);
 
@@ -69,14 +75,28 @@ async function generateToken() {
         console.log('   https://myaccount.google.com/permissions');
         console.log('💡 Then run this script again.');
       } else {
-        console.log('💾 In a real application, you would save the refresh token to your database:');
-        console.log('   Refresh Token:', tokens.refresh_token);
-        console.log('');
+        // Connect to database
+        await connectDB();
+
+        // Find admin user based on ADMIN_USERNAME or default 'admin'
+        const username = process.env.ADMIN_USERNAME || 'admin';
+        const adminUser = await Admin.findOne({ username });
+        if (!adminUser) {
+          console.error(`❌ Admin user '${username}' not found.`);
+          process.exit(1);
+        }
+
+        // Save tokens to database
+        await OAuthToken.createOrUpdateToken(adminUser._id, tokens);
+        console.log('💾 Refresh token saved to database for user:', username);
         console.log('🎉 Setup complete! Your application can now access the Blogger API.');
+
+        // Close DB connection
+        await mongoose.connection.close();
       }
 
       console.log('🔐 ================================');
-      
+
     } catch (error) {
       console.error('❌ Error exchanging code for tokens:', error.message);
       console.log('💡 Please make sure:');
@@ -84,7 +104,7 @@ async function generateToken() {
       console.log('   2. Your Google Cloud Console credentials are valid');
       console.log('   3. The redirect URI matches your Google Cloud Console settings');
     }
-    
+
     rl.close();
   });
 }
