@@ -143,7 +143,10 @@ const changePassword = async (req, res) => {
 // OAuth authorization endpoint
 const getAuthUrl = async (req, res) => {
   try {
-    const authUrl = await bloggerService.getAuthUrl();
+    const stateToken = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
+      expiresIn: '10m'
+    });
+    const authUrl = await bloggerService.getAuthUrl(stateToken);
     
     res.json({
       success: true,
@@ -163,7 +166,7 @@ const getAuthUrl = async (req, res) => {
 // OAuth callback endpoint
 const handleOAuthCallback = async (req, res) => {
   try {
-    const { code } = req.query;
+    const { code, state } = req.query;
     
     if (!code) {
       return res.status(400).json({
@@ -172,8 +175,29 @@ const handleOAuthCallback = async (req, res) => {
       });
     }
 
+    let userId = req.user ? req.user.id : null;
+
+    if (!userId && state) {
+      try {
+        const decoded = jwt.verify(state, process.env.JWT_SECRET);
+        userId = decoded.id;
+      } catch (err) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid state parameter'
+        });
+      }
+    }
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User identification failed'
+      });
+    }
+
     // Exchange code for tokens
-    const tokens = await bloggerService.exchangeCodeForTokens(code, req.user.id);
+    const tokens = await bloggerService.exchangeCodeForTokens(code, userId);
     
     res.json({
       success: true,
