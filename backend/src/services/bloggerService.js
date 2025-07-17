@@ -22,7 +22,10 @@ class BloggerService {
 
   // Generate authorization URL for OAuth flow
   async getAuthUrl(state = '') {
-    const scopes = ['https://www.googleapis.com/auth/blogger'];
+    const scopes = [
+      'https://www.googleapis.com/auth/blogger',
+      'https://www.googleapis.com/auth/userinfo.profile'
+    ];
 
     return this.oauth2Client.generateAuthUrl({
       access_type: 'offline',
