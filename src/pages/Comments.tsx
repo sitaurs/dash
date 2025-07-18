@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle, Search, Filter, Check, X, Flag, Calendar, User, AlertCircle } from 'lucide-react';
 import { useComments, useUpdateCommentStatus, useDeleteComment } from '../hooks/useApi';
+import { useLoading } from '../contexts/LoadingContext';
 
 const Comments: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,12 +16,18 @@ const Comments: React.FC = () => {
 
   const updateCommentMutation = useUpdateCommentStatus();
   const deleteCommentMutation = useDeleteComment();
+  const { show, hide } = useLoading();
 
-  const handleCommentAction = async (commentId: string, action: 'approve' | 'spam' | 'delete') => {
+  const handleCommentAction = async (
+    commentId: string,
+    action: 'approve' | 'spam' | 'delete',
+    withLoading = true
+  ) => {
     const comment = comments?.find((c: any) => c.id === commentId);
     if (!comment) return;
 
     try {
+      if (withLoading) show();
       if (action === 'delete') {
         await deleteCommentMutation.mutateAsync({
           commentId,
@@ -39,6 +46,8 @@ const Comments: React.FC = () => {
       }
     } catch (error) {
       alert('Gagal memproses komentar');
+    } finally {
+      if (withLoading) hide();
     }
   };
 
@@ -52,13 +61,16 @@ const Comments: React.FC = () => {
     if (!confirmed) return;
 
     try {
+      show();
       for (const commentId of selectedComments) {
-        await handleCommentAction(commentId, action);
+        await handleCommentAction(commentId, action, false);
       }
       setSelectedComments([]);
       alert(`${selectedComments.length} komentar berhasil diproses`);
     } catch (error) {
       alert('Gagal memproses beberapa komentar');
+    } finally {
+      hide();
     }
   };
 

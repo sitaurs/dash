@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Save, Eye, X, Tag, Calendar, Globe } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
 import { useCreatePost, useUpdatePost, usePost } from '../hooks/useApi';
+import { useLoading } from '../contexts/LoadingContext';
 
 interface PostEditorProps {
   postId?: string;
@@ -23,6 +24,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
   const { data: existingPost, isLoading: loadingPost } = usePost(postId || '');
   const createPostMutation = useCreatePost();
   const updatePostMutation = useUpdatePost();
+  const { show, hide } = useLoading();
 
   useEffect(() => {
     if (existingPost) {
@@ -58,6 +60,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
     };
 
     try {
+      show();
       if (postId) {
         await updatePostMutation.mutateAsync({ postId, postData });
         alert(publish ? 'Postingan berhasil dipublikasi' : 'Postingan berhasil disimpan');
@@ -65,11 +68,13 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
         await createPostMutation.mutateAsync(postData);
         alert(publish ? 'Postingan berhasil dipublikasi' : 'Draf berhasil disimpan');
       }
-      
+
       onSave?.();
       onClose();
     } catch (error: any) {
       alert('Gagal menyimpan postingan: ' + (error.message || 'Unknown error'));
+    } finally {
+      hide();
     }
   };
 

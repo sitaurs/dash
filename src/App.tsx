@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { BlogProvider } from './contexts/BlogContext';
+import { LoadingProvider } from './contexts/LoadingContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -30,7 +31,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BlogProvider>
-          <Router>
+          <LoadingProvider>
+            <Router>
             <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-400">
               <Routes>
                 <Route path="/login" element={<Login />} />
@@ -87,7 +89,8 @@ function App() {
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>
             </div>
-          </Router>
+            </Router>
+          </LoadingProvider>
         </BlogProvider>
       </AuthProvider>
     </QueryClientProvider>

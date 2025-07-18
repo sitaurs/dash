@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, Filter, Plus, Edit, Trash2, Eye, Calendar, AlertCircle } from 'lucide-react';
 import { usePosts, useDeletePost } from '../hooks/useApi';
 import PostEditor from '../components/PostEditor';
+import { useLoading } from '../contexts/LoadingContext';
 
 const Posts: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,6 +12,7 @@ const Posts: React.FC = () => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingPostId, setEditingPostId] = useState<string | undefined>();
   const postsPerPage = 10;
+  const { show, hide } = useLoading();
 
   const { data: postsData, isLoading, error, refetch } = usePosts({
     page: currentPage,
@@ -24,10 +26,13 @@ const Posts: React.FC = () => {
   const handleDelete = async (postId: string) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus postingan ini?')) {
       try {
+        show();
         await deletePostMutation.mutateAsync(postId);
         alert('Postingan berhasil dihapus');
       } catch (error) {
         alert('Gagal menghapus postingan');
+      } finally {
+        hide();
       }
     }
   };
