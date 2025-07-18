@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, Plus, Edit, Trash2, Calendar, Eye, AlertCircle } from 'lucide-react';
 import { usePages, useDeletePage } from '../hooks/useApi';
 import PageEditor from '../components/PageEditor';
+import { useLoading } from '../contexts/LoadingContext';
 
 const Pages: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,6 +13,7 @@ const Pages: React.FC = () => {
 
   const { data: pages, isLoading, error, refetch } = usePages();
   const deletePageMutation = useDeletePage();
+  const { show, hide } = useLoading();
 
   const handleCreatePage = () => {
     setEditingPageId(undefined);
@@ -35,10 +37,13 @@ const Pages: React.FC = () => {
   const handleDelete = async (pageId: string) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus halaman ini?')) {
       try {
+        show();
         await deletePageMutation.mutateAsync(pageId);
         alert('Halaman berhasil dihapus');
       } catch (error) {
         alert('Gagal menghapus halaman');
+      } finally {
+        hide();
       }
     }
   };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, Search, Filter, Image, Video, File, Trash2, Copy, Eye, Calendar, AlertCircle } from 'lucide-react';
 import { useContent, useUploadContent, useDeleteContent } from '../hooks/useApi';
+import { useLoading } from '../contexts/LoadingContext';
 
 const ContentLibrary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,12 +17,14 @@ const ContentLibrary: React.FC = () => {
 
   const uploadMutation = useUploadContent();
   const deleteMutation = useDeleteContent();
+  const { show, hide } = useLoading();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
     try {
+      show();
       for (const file of files) {
         const formData = new FormData();
         formData.append('file', file);
@@ -30,6 +33,8 @@ const ContentLibrary: React.FC = () => {
       alert('File berhasil diupload');
     } catch (error) {
       alert('Gagal mengupload file');
+    } finally {
+      hide();
     }
 
     // Reset input
@@ -39,10 +44,13 @@ const ContentLibrary: React.FC = () => {
   const handleDelete = async (contentId: string) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus file ini?')) {
       try {
+        show();
         await deleteMutation.mutateAsync(contentId);
         alert('File berhasil dihapus');
       } catch (error) {
         alert('Gagal menghapus file');
+      } finally {
+        hide();
       }
     }
   };
@@ -57,6 +65,7 @@ const ContentLibrary: React.FC = () => {
     if (!confirmed) return;
 
     try {
+      show();
       for (const fileId of selectedFiles) {
         await deleteMutation.mutateAsync(fileId);
       }
@@ -64,6 +73,8 @@ const ContentLibrary: React.FC = () => {
       alert(`${selectedFiles.length} file berhasil dihapus`);
     } catch (error) {
       alert('Gagal menghapus beberapa file');
+    } finally {
+      hide();
     }
   };
 

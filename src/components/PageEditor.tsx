@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Save, Eye, X, Calendar, Globe } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
 import { useCreatePage, useUpdatePage, usePage } from '../hooks/useApi';
+import { useLoading } from '../contexts/LoadingContext';
 
 interface PageEditorProps {
   pageId?: string;
@@ -21,6 +22,7 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
   const { data: existingPage } = usePage(pageId || '');
   const createPageMutation = useCreatePage();
   const updatePageMutation = useUpdatePage();
+  const { show, hide } = useLoading();
 
   useEffect(() => {
     if (existingPage) {
@@ -52,6 +54,7 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
     };
 
     try {
+      show();
       if (pageId) {
         await updatePageMutation.mutateAsync({ pageId, pageData });
         alert(publish ? 'Halaman berhasil dipublikasi' : 'Halaman berhasil disimpan');
@@ -64,6 +67,8 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
       onClose();
     } catch (error: any) {
       alert('Gagal menyimpan halaman: ' + (error.message || 'Unknown error'));
+    } finally {
+      hide();
     }
   };
 
