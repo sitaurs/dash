@@ -445,16 +445,20 @@ class BloggerService {
     await this.ensureValidToken(targetUserId);
 
     try {
-      const params = { 
+      const params = {
         blogId,
         fields: 'items(id,content,published,updated,author,status,post,inReplyTo)'
       };
-      
+
+      let response;
       if (postId) {
         params.postId = postId;
+        response = await this.blogger.comments.list(params);
+      } else {
+        // When no postId provided, fetch comments for entire blog
+        response = await this.blogger.comments.listByBlog(params);
       }
-      
-      const response = await this.blogger.comments.list(params);
+
       return response.data;
     } catch (error) {
       console.error('❌ Failed to fetch comments:', error);

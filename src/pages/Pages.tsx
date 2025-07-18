@@ -2,13 +2,35 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Plus, Edit, Trash2, Calendar, Eye, AlertCircle } from 'lucide-react';
 import { usePages, useDeletePage } from '../hooks/useApi';
+import PageEditor from '../components/PageEditor';
 
 const Pages: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editingPageId, setEditingPageId] = useState<string | undefined>();
 
   const { data: pages, isLoading, error, refetch } = usePages();
   const deletePageMutation = useDeletePage();
+
+  const handleCreatePage = () => {
+    setEditingPageId(undefined);
+    setIsEditorOpen(true);
+  };
+
+  const handleEditPage = (pageId: string) => {
+    setEditingPageId(pageId);
+    setIsEditorOpen(true);
+  };
+
+  const handleCloseEditor = () => {
+    setIsEditorOpen(false);
+    setEditingPageId(undefined);
+  };
+
+  const handleSavePage = () => {
+    refetch();
+  };
 
   const handleDelete = async (pageId: string) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus halaman ini?')) {
@@ -92,7 +114,10 @@ const Pages: React.FC = () => {
             </p>
           )}
         </div>
-        <button className="glass-button px-4 py-2 text-white rounded-lg hover:scale-105 transition-all duration-200 flex items-center space-x-2 mt-4 sm:mt-0">
+        <button
+          onClick={handleCreatePage}
+          className="glass-button px-4 py-2 text-white rounded-lg hover:scale-105 transition-all duration-200 flex items-center space-x-2 mt-4 sm:mt-0"
+        >
           <Plus className="w-4 h-4" />
           <span>Buat Halaman</span>
         </button>
@@ -189,8 +214,9 @@ const Pages: React.FC = () => {
                     <Eye className="w-4 h-4 text-white/60" />
                   </a>
                 )}
-                <button 
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors" 
+                <button
+                  onClick={() => handleEditPage(page.id)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                   title="Edit"
                 >
                   <Edit className="w-4 h-4 text-white/60" />
@@ -223,7 +249,10 @@ const Pages: React.FC = () => {
                   : 'Belum ada halaman yang dibuat'
                 }
               </p>
-              <button className="glass-button px-4 py-2 text-white rounded-lg hover:bg-white/20 transition-colors flex items-center space-x-2 mx-auto">
+              <button
+                onClick={handleCreatePage}
+                className="glass-button px-4 py-2 text-white rounded-lg hover:bg-white/20 transition-colors flex items-center space-x-2 mx-auto"
+              >
                 <Plus className="w-4 h-4" />
                 <span>Buat Halaman Pertama</span>
               </button>
@@ -231,6 +260,13 @@ const Pages: React.FC = () => {
           </div>
         )}
       </motion.div>
+
+      <PageEditor
+        pageId={editingPageId}
+        isOpen={isEditorOpen}
+        onClose={handleCloseEditor}
+        onSave={handleSavePage}
+      />
     </div>
   );
 };
