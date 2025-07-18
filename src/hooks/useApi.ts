@@ -120,6 +120,17 @@ export const usePages = () => {
   });
 };
 
+export const usePage = (pageId: string) => {
+  return useQuery({
+    queryKey: ['page', pageId],
+    queryFn: async () => {
+      const response = await apiClient.get(`/pages/${pageId}`);
+      return response.data.data;
+    },
+    enabled: !!pageId,
+  });
+};
+
 export const useCreatePage = () => {
   const queryClient = useQueryClient();
   
