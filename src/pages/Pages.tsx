@@ -4,6 +4,7 @@ import { Search, Plus, Edit, Trash2, Calendar, Eye, AlertCircle } from 'lucide-r
 import { usePages, useDeletePage } from '../hooks/useApi';
 import PageEditor from '../components/PageEditor';
 import { useLoading } from '../contexts/LoadingContext';
+import { useModal } from '../contexts/ModalContext';
 
 const Pages: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +15,7 @@ const Pages: React.FC = () => {
   const { data: pages, isLoading, error, refetch } = usePages();
   const deletePageMutation = useDeletePage();
   const { show, hide } = useLoading();
+  const { alert, confirm } = useModal();
 
   const handleCreatePage = () => {
     setEditingPageId(undefined);
@@ -35,16 +37,16 @@ const Pages: React.FC = () => {
   };
 
   const handleDelete = async (pageId: string) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus halaman ini?')) {
-      try {
-        show();
-        await deletePageMutation.mutateAsync(pageId);
-        alert('Halaman berhasil dihapus');
-      } catch (error) {
-        alert('Gagal menghapus halaman');
-      } finally {
-        hide();
-      }
+    const confirmed = await confirm('Apakah Anda yakin ingin menghapus halaman ini?');
+    if (!confirmed) return;
+    try {
+      show();
+      await deletePageMutation.mutateAsync(pageId);
+      await alert('Halaman berhasil dihapus');
+    } catch (error) {
+      await alert('Gagal menghapus halaman');
+    } finally {
+      hide();
     }
   };
 

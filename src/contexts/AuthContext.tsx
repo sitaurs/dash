@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import { useModal } from './ModalContext';
 
 interface User {
   id: string;
@@ -23,6 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { alert } = useModal();
 
   const checkAuthStatus = useCallback(async () => {
     try {
@@ -61,11 +63,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Handle specific error cases
       if (error.response?.status === 423) {
-        alert('Account is temporarily locked due to too many failed attempts. Please try again later.');
+        await alert('Account is temporarily locked due to too many failed attempts. Please try again later.');
       } else if (error.response?.status === 401) {
-        alert('Invalid username or password');
+        await alert('Invalid username or password');
       } else {
-        alert('Login failed. Please try again.');
+        await alert('Login failed. Please try again.');
       }
       
       return false;

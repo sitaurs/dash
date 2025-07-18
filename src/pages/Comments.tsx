@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MessageCircle, Search, Filter, Check, X, Flag, Calendar, User, AlertCircle } from 'lucide-react';
 import { useComments, useUpdateCommentStatus, useDeleteComment } from '../hooks/useApi';
 import { useLoading } from '../contexts/LoadingContext';
+import { useModal } from '../contexts/ModalContext';
 
 const Comments: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,6 +18,7 @@ const Comments: React.FC = () => {
   const updateCommentMutation = useUpdateCommentStatus();
   const deleteCommentMutation = useDeleteComment();
   const { show, hide } = useLoading();
+  const { alert, confirm } = useModal();
 
   const handleCommentAction = async (
     commentId: string,
@@ -34,7 +36,7 @@ const Comments: React.FC = () => {
           blogId: comment.blogId,
           postId: comment.postId
         });
-        alert('Komentar berhasil dihapus');
+        await alert('Komentar berhasil dihapus');
       } else {
         await updateCommentMutation.mutateAsync({
           commentId,
@@ -42,10 +44,10 @@ const Comments: React.FC = () => {
           blogId: comment.blogId,
           postId: comment.postId
         });
-        alert(`Komentar berhasil ${action === 'approve' ? 'disetujui' : 'ditandai sebagai spam'}`);
+        await alert(`Komentar berhasil ${action === 'approve' ? 'disetujui' : 'ditandai sebagai spam'}`);
       }
     } catch (error) {
-      alert('Gagal memproses komentar');
+      await alert('Gagal memproses komentar');
     } finally {
       if (withLoading) hide();
     }
@@ -54,7 +56,7 @@ const Comments: React.FC = () => {
   const handleBulkAction = async (action: 'approve' | 'spam' | 'delete') => {
     if (selectedComments.length === 0) return;
 
-    const confirmed = window.confirm(
+    const confirmed = await confirm(
       `Apakah Anda yakin ingin ${action === 'approve' ? 'menyetujui' : action === 'spam' ? 'menandai sebagai spam' : 'menghapus'} ${selectedComments.length} komentar?`
     );
 
@@ -66,9 +68,9 @@ const Comments: React.FC = () => {
         await handleCommentAction(commentId, action, false);
       }
       setSelectedComments([]);
-      alert(`${selectedComments.length} komentar berhasil diproses`);
+      await alert(`${selectedComments.length} komentar berhasil diproses`);
     } catch (error) {
-      alert('Gagal memproses beberapa komentar');
+      await alert('Gagal memproses beberapa komentar');
     } finally {
       hide();
     }

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useModal } from '../contexts/ModalContext';
 import { Editor } from '@tinymce/tinymce-react';
 
 interface RichTextEditorProps {
@@ -15,6 +16,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   placeholder = "Mulai menulis..."
 }) => {
   const editorRef = useRef<any>(null);
+  const { alert } = useModal();
 
   const handleEditorChange = (content: string) => {
     onChange(content);
@@ -186,18 +188,18 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                     body: formData
                   })
                   .then(response => response.json())
-                  .then(result => {
+                  .then(async result => {
                     if (result.success) {
                       callback(result.data.url, {
                         alt: file.name,
                         title: file.name
                       });
                     } else {
-                      alert('Upload failed: ' + result.message);
+                      await alert('Upload failed: ' + result.message);
                     }
                   })
-                  .catch(error => {
-                    alert('Upload failed: ' + error.message);
+                  .catch(async error => {
+                    await alert('Upload failed: ' + error.message);
                   });
                 }
               });

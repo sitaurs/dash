@@ -4,6 +4,7 @@ import { Save, Eye, X, Calendar, Globe } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
 import { useCreatePage, useUpdatePage, usePage } from '../hooks/useApi';
 import { useLoading } from '../contexts/LoadingContext';
+import { useModal } from '../contexts/ModalContext';
 
 interface PageEditorProps {
   pageId?: string;
@@ -23,6 +24,7 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
   const createPageMutation = useCreatePage();
   const updatePageMutation = useUpdatePage();
   const { show, hide } = useLoading();
+  const { alert } = useModal();
 
   useEffect(() => {
     if (existingPage) {
@@ -38,12 +40,12 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
 
   const handleSave = async (publish = false) => {
     if (!title.trim()) {
-      alert('Judul halaman tidak boleh kosong');
+      await alert('Judul halaman tidak boleh kosong');
       return;
     }
 
     if (!content.trim()) {
-      alert('Konten halaman tidak boleh kosong');
+      await alert('Konten halaman tidak boleh kosong');
       return;
     }
 
@@ -57,16 +59,16 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
       show();
       if (pageId) {
         await updatePageMutation.mutateAsync({ pageId, pageData });
-        alert(publish ? 'Halaman berhasil dipublikasi' : 'Halaman berhasil disimpan');
+        await alert(publish ? 'Halaman berhasil dipublikasi' : 'Halaman berhasil disimpan');
       } else {
         await createPageMutation.mutateAsync(pageData);
-        alert(publish ? 'Halaman berhasil dipublikasi' : 'Draf halaman berhasil disimpan');
+        await alert(publish ? 'Halaman berhasil dipublikasi' : 'Draf halaman berhasil disimpan');
       }
 
       onSave?.();
       onClose();
     } catch (error: any) {
-      alert('Gagal menyimpan halaman: ' + (error.message || 'Unknown error'));
+      await alert('Gagal menyimpan halaman: ' + (error.message || 'Unknown error'));
     } finally {
       hide();
     }

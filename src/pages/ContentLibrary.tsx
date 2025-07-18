@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Upload, Search, Filter, Image, Video, File, Trash2, Copy, Eye, Calendar, AlertCircle } from 'lucide-react';
 import { useContent, useUploadContent, useDeleteContent } from '../hooks/useApi';
 import { useLoading } from '../contexts/LoadingContext';
+import { useModal } from '../contexts/ModalContext';
 
 const ContentLibrary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,6 +19,7 @@ const ContentLibrary: React.FC = () => {
   const uploadMutation = useUploadContent();
   const deleteMutation = useDeleteContent();
   const { show, hide } = useLoading();
+  const { alert, confirm } = useModal();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -30,9 +32,9 @@ const ContentLibrary: React.FC = () => {
         formData.append('file', file);
         await uploadMutation.mutateAsync(formData);
       }
-      alert('File berhasil diupload');
+      await alert('File berhasil diupload');
     } catch (error) {
-      alert('Gagal mengupload file');
+      await alert('Gagal mengupload file');
     } finally {
       hide();
     }
@@ -42,23 +44,23 @@ const ContentLibrary: React.FC = () => {
   };
 
   const handleDelete = async (contentId: string) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus file ini?')) {
-      try {
-        show();
-        await deleteMutation.mutateAsync(contentId);
-        alert('File berhasil dihapus');
-      } catch (error) {
-        alert('Gagal menghapus file');
-      } finally {
-        hide();
-      }
+    const confirmed = await confirm('Apakah Anda yakin ingin menghapus file ini?');
+    if (!confirmed) return;
+    try {
+      show();
+      await deleteMutation.mutateAsync(contentId);
+      await alert('File berhasil dihapus');
+    } catch (error) {
+      await alert('Gagal menghapus file');
+    } finally {
+      hide();
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedFiles.length === 0) return;
 
-    const confirmed = window.confirm(
+    const confirmed = await confirm(
       `Apakah Anda yakin ingin menghapus ${selectedFiles.length} file?`
     );
 
@@ -70,9 +72,9 @@ const ContentLibrary: React.FC = () => {
         await deleteMutation.mutateAsync(fileId);
       }
       setSelectedFiles([]);
-      alert(`${selectedFiles.length} file berhasil dihapus`);
+      await alert(`${selectedFiles.length} file berhasil dihapus`);
     } catch (error) {
-      alert('Gagal menghapus beberapa file');
+      await alert('Gagal menghapus beberapa file');
     } finally {
       hide();
     }
@@ -100,9 +102,9 @@ const ContentLibrary: React.FC = () => {
     }
   };
 
-  const copyToClipboard = (url: string) => {
+  const copyToClipboard = async (url: string) => {
     navigator.clipboard.writeText(url);
-    alert('URL berhasil disalin');
+    await alert('URL berhasil disalin');
   };
 
   const formatDate = (dateString: string) => {

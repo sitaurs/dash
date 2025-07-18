@@ -4,6 +4,7 @@ import { Save, Eye, X, Tag, Calendar, Globe } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
 import { useCreatePost, useUpdatePost, usePost } from '../hooks/useApi';
 import { useLoading } from '../contexts/LoadingContext';
+import { useModal } from '../contexts/ModalContext';
 
 interface PostEditorProps {
   postId?: string;
@@ -25,6 +26,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
   const createPostMutation = useCreatePost();
   const updatePostMutation = useUpdatePost();
   const { show, hide } = useLoading();
+  const { alert } = useModal();
 
   useEffect(() => {
     if (existingPost) {
@@ -43,12 +45,12 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
 
   const handleSave = async (publish = false) => {
     if (!title.trim()) {
-      alert('Judul postingan tidak boleh kosong');
+      await alert('Judul postingan tidak boleh kosong');
       return;
     }
 
     if (!content.trim()) {
-      alert('Konten postingan tidak boleh kosong');
+      await alert('Konten postingan tidak boleh kosong');
       return;
     }
 
@@ -63,16 +65,16 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
       show();
       if (postId) {
         await updatePostMutation.mutateAsync({ postId, postData });
-        alert(publish ? 'Postingan berhasil dipublikasi' : 'Postingan berhasil disimpan');
+        await alert(publish ? 'Postingan berhasil dipublikasi' : 'Postingan berhasil disimpan');
       } else {
         await createPostMutation.mutateAsync(postData);
-        alert(publish ? 'Postingan berhasil dipublikasi' : 'Draf berhasil disimpan');
+        await alert(publish ? 'Postingan berhasil dipublikasi' : 'Draf berhasil disimpan');
       }
 
       onSave?.();
       onClose();
     } catch (error: any) {
-      alert('Gagal menyimpan postingan: ' + (error.message || 'Unknown error'));
+      await alert('Gagal menyimpan postingan: ' + (error.message || 'Unknown error'));
     } finally {
       hide();
     }
