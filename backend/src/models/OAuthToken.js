@@ -70,15 +70,7 @@ oauthTokenSchema.statics.findActiveToken = function(userId) {
 
 // Static method to create or update token
 oauthTokenSchema.statics.createOrUpdateToken = async function(userId, tokenData) {
-  // Deactivate existing tokens for this user
-  await this.updateMany(
-    { userId: userId }, 
-    { isActive: false }
-  );
-  
-  // Create new token
-  const newToken = new this({
-    userId: userId,
+  const update = {
     accessToken: tokenData.access_token,
     refreshToken: tokenData.refresh_token,
     expiresAt: new Date(tokenData.expiry_date),
@@ -87,11 +79,20 @@ oauthTokenSchema.statics.createOrUpdateToken = async function(userId, tokenData)
     googleUserId: tokenData.google_user_id,
     isActive: true,
     lastRefreshed: new Date()
-  });
-  
-  await newToken.save();
+  };
+
+  const token = await this.findOneAndUpdate(
+    { userId },
+    update,
+    {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true
+    }
+  );
+
   console.log('✅ OAuth token saved for user:', userId);
-  return newToken;
+  return token;
 };
 
 // Method to update access token after refresh
