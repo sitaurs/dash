@@ -99,57 +99,57 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="glass-card w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="glass-card w-full max-w-7xl max-h-[95vh] overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div>
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="text-xl font-bold text-white">
               {postId ? 'Edit Postingan' : 'Buat Postingan Baru'}
             </h2>
-            <p className="text-white/60 mt-1">
+            <p className="text-white/60 text-sm">
               {isDraft ? 'Mode Draft' : 'Mode Publish'}
             </p>
           </div>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsPreview(!isPreview)}
-              className="glass-button px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-2"
+              className="glass-button px-3 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-1 text-sm"
             >
               <Eye className="w-4 h-4" />
               <span>{isPreview ? 'Edit' : 'Preview'}</span>
             </button>
             <button
               onClick={() => setIsHtmlMode(!isHtmlMode)}
-              className="glass-button px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-2"
+              className="glass-button px-3 py-2 text-white hover:bg-white/20 rounded-lg transition-colors text-sm"
             >
-              <span>{isHtmlMode ? 'Visual' : 'HTML'}</span>
+              {isHtmlMode ? 'Visual' : 'HTML'}
             </button>
             
             <button
               onClick={() => handleSave(false)}
               disabled={createPostMutation.isPending || updatePostMutation.isPending}
-              className="glass-button px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-2"
+              className="glass-button px-3 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-1 text-sm"
             >
               <Save className="w-4 h-4" />
-              <span>Simpan Draft</span>
+              <span>Draft</span>
             </button>
             
             <button
               onClick={() => handleSave(true)}
               disabled={createPostMutation.isPending || updatePostMutation.isPending}
-              className="bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-colors flex items-center space-x-2"
+              className="bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-2 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-colors flex items-center space-x-1 text-sm"
             >
               <Globe className="w-4 h-4" />
-              <span>Publikasi</span>
+              <span>Publish</span>
             </button>
             
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-white" />
+              <X className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
@@ -159,22 +159,22 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
           {/* Main Editor */}
           <div className="flex-1 flex flex-col">
             {/* Title Input */}
-            <div className="p-6 border-b border-white/10">
+            <div className="p-4 border-b border-white/10">
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Judul postingan..."
-                className="w-full text-2xl font-bold bg-transparent text-white placeholder-white/40 border-none outline-none"
+                className="w-full text-xl font-bold bg-transparent text-white placeholder-white/40 border-none outline-none"
               />
             </div>
 
             {/* Editor/Preview */}
             <div className="flex-1 overflow-hidden">
               {isPreview ? (
-                <div className="h-full overflow-y-auto p-6">
+                <div className="h-full overflow-y-auto p-4">
                   <div className="prose prose-lg max-w-none">
-                    <h1 className="text-white text-3xl font-bold mb-6">{title || 'Untitled'}</h1>
+                    <h1 className="text-white text-2xl font-bold mb-4">{title || 'Untitled'}</h1>
                     <div
                       className="text-white/90 leading-relaxed prose-invert max-w-none"
                       dangerouslySetInnerHTML={{ __html: content }}
@@ -182,18 +182,18 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
                   </div>
                 </div>
               ) : (
-                <div className="h-full p-6">
+                <div className="h-full p-4">
                   {isHtmlMode ? (
                     <textarea
                       value={content}
                       onChange={e => setContent(e.target.value)}
-                      className="w-full h-full bg-gray-800 text-white p-4 font-mono border border-white/20 rounded"
+                      className="w-full h-full bg-gray-800 text-white p-3 font-mono border border-white/20 rounded text-sm"
                     />
                   ) : (
                     <RichTextEditor
                       value={content}
                       onChange={setContent}
-                      height={700}
+                      height={window.innerHeight - 300}
                       placeholder="Mulai menulis postingan Anda..."
                     />
                   )}
@@ -203,29 +203,29 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
           </div>
 
           {/* Sidebar */}
-          <div className="w-80 border-l border-white/10 p-6 overflow-y-auto">
+          <div className="w-64 border-l border-white/10 p-4 overflow-y-auto">
             {/* Status */}
-            <div className="mb-6">
-              <h3 className="text-white font-semibold mb-3 flex items-center">
-                <Calendar className="w-4 h-4 mr-2" />
+            <div className="mb-4">
+              <h3 className="text-white font-medium mb-2 flex items-center text-sm">
+                <Calendar className="w-3 h-3 mr-1" />
                 Status
               </h3>
-              <div className="space-y-2">
-                <label className="flex items-center space-x-2 cursor-pointer">
+              <div className="space-y-1">
+                <label className="flex items-center space-x-2 cursor-pointer text-sm">
                   <input
                     type="radio"
                     checked={isDraft}
                     onChange={() => setIsDraft(true)}
-                    className="text-purple-500"
+                    className="text-purple-500 w-3 h-3"
                   />
                   <span className="text-white/80">Draft</span>
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className="flex items-center space-x-2 cursor-pointer text-sm">
                   <input
                     type="radio"
                     checked={!isDraft}
                     onChange={() => setIsDraft(false)}
-                    className="text-purple-500"
+                    className="text-purple-500 w-3 h-3"
                   />
                   <span className="text-white/80">Publish</span>
                 </label>
@@ -233,43 +233,43 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
             </div>
 
             {/* Labels */}
-            <div className="mb-6">
-              <h3 className="text-white font-semibold mb-3 flex items-center">
-                <Tag className="w-4 h-4 mr-2" />
+            <div className="mb-4">
+              <h3 className="text-white font-medium mb-2 flex items-center text-sm">
+                <Tag className="w-3 h-3 mr-1" />
                 Label
               </h3>
               
               {/* Add Label */}
-              <div className="flex space-x-2 mb-3">
+              <div className="flex space-x-1 mb-2">
                 <input
                   type="text"
                   value={newLabel}
                   onChange={(e) => setNewLabel(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Tambah label..."
-                  className="flex-1 glass-button px-3 py-2 text-white placeholder-white/40 text-sm"
+                  className="flex-1 glass-button px-2 py-1 text-white placeholder-white/40 text-xs"
                 />
                 <button
                   onClick={handleAddLabel}
-                  className="glass-button px-3 py-2 text-white hover:bg-white/20 text-sm"
+                  className="glass-button px-2 py-1 text-white hover:bg-white/20 text-xs"
                 >
-                  Tambah
+                  +
                 </button>
               </div>
 
               {/* Label List */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {labels.map((label) => (
                   <div
                     key={label}
-                    className="flex items-center justify-between bg-purple-500/20 px-3 py-2 rounded-lg"
+                    className="flex items-center justify-between bg-purple-500/20 px-2 py-1 rounded text-xs"
                   >
-                    <span className="text-purple-200 text-sm">{label}</span>
+                    <span className="text-purple-200">{label}</span>
                     <button
                       onClick={() => handleRemoveLabel(label)}
                       className="text-purple-300 hover:text-white transition-colors"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
@@ -278,9 +278,9 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
 
             {/* Post Info */}
             {existingPost && (
-              <div className="mb-6">
-                <h3 className="text-white font-semibold mb-3">Informasi</h3>
-                <div className="space-y-2 text-sm">
+              <div className="mb-4">
+                <h3 className="text-white font-medium mb-2 text-sm">Info</h3>
+                <div className="space-y-1 text-xs">
                   <div className="flex justify-between">
                     <span className="text-white/60">Status:</span>
                     <span className={`${existingPost.status === 'LIVE' ? 'text-green-400' : 'text-yellow-400'}`}>
@@ -290,7 +290,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
                   {existingPost.published && (
                     <div className="flex justify-between">
                       <span className="text-white/60">Dipublikasi:</span>
-                      <span className="text-white/80">
+                      <span className="text-white/80 text-xs">
                         {new Date(existingPost.published).toLocaleDateString('id-ID')}
                       </span>
                     </div>
@@ -298,7 +298,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
                   {existingPost.updated && (
                     <div className="flex justify-between">
                       <span className="text-white/60">Diperbarui:</span>
-                      <span className="text-white/80">
+                      <span className="text-white/80 text-xs">
                         {new Date(existingPost.updated).toLocaleDateString('id-ID')}
                       </span>
                     </div>
@@ -308,13 +308,13 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
             )}
 
             {/* Tips */}
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-              <h4 className="text-blue-300 font-medium mb-2">💡 Tips</h4>
-              <ul className="text-blue-200/80 text-sm space-y-1">
-                <li>• Gunakan heading (H1-H6) untuk struktur yang baik</li>
-                <li>• Upload gambar langsung dengan drag & drop</li>
-                <li>• Tambahkan label untuk kategorisasi</li>
-                <li>• Preview sebelum publikasi</li>
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded p-3">
+              <h4 className="text-blue-300 font-medium mb-1 text-xs">💡 Tips</h4>
+              <ul className="text-blue-200/80 text-xs space-y-0.5">
+                <li>• Gunakan heading untuk struktur</li>
+                <li>• Upload gambar drag & drop</li>
+                <li>• Tambahkan label</li>
+                <li>• Preview sebelum publish</li>
               </ul>
             </div>
           </div>

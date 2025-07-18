@@ -75,57 +75,57 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="glass-card w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="glass-card w-full max-w-7xl max-h-[95vh] overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div>
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="text-xl font-bold text-white">
               {pageId ? 'Edit Halaman' : 'Buat Halaman Baru'}
             </h2>
-            <p className="text-white/60 mt-1">
+            <p className="text-white/60 text-sm">
               {isDraft ? 'Mode Draft' : 'Mode Publish'}
             </p>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsPreview(!isPreview)}
-              className="glass-button px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-2"
+              className="glass-button px-3 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-1 text-sm"
             >
               <Eye className="w-4 h-4" />
               <span>{isPreview ? 'Edit' : 'Preview'}</span>
             </button>
             <button
               onClick={() => setIsHtmlMode(!isHtmlMode)}
-              className="glass-button px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-2"
+              className="glass-button px-3 py-2 text-white hover:bg-white/20 rounded-lg transition-colors text-sm"
             >
-              <span>{isHtmlMode ? 'Visual' : 'HTML'}</span>
+              {isHtmlMode ? 'Visual' : 'HTML'}
             </button>
 
             <button
               onClick={() => handleSave(false)}
               disabled={createPageMutation.isPending || updatePageMutation.isPending}
-              className="glass-button px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-2"
+              className="glass-button px-3 py-2 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-1 text-sm"
             >
               <Save className="w-4 h-4" />
-              <span>Simpan Draft</span>
+              <span>Draft</span>
             </button>
 
             <button
               onClick={() => handleSave(true)}
               disabled={createPageMutation.isPending || updatePageMutation.isPending}
-              className="bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-colors flex items-center space-x-2"
+              className="bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-2 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-colors flex items-center space-x-1 text-sm"
             >
               <Globe className="w-4 h-4" />
-              <span>Publikasi</span>
+              <span>Publish</span>
             </button>
 
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-white" />
+              <X className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
@@ -135,22 +135,22 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
           {/* Main Editor */}
           <div className="flex-1 flex flex-col">
             {/* Title Input */}
-            <div className="p-6 border-b border-white/10">
+            <div className="p-4 border-b border-white/10">
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Judul halaman..."
-                className="w-full text-2xl font-bold bg-transparent text-white placeholder-white/40 border-none outline-none"
+                className="w-full text-xl font-bold bg-transparent text-white placeholder-white/40 border-none outline-none"
               />
             </div>
 
             {/* Editor/Preview */}
             <div className="flex-1 overflow-hidden">
               {isPreview ? (
-                <div className="h-full overflow-y-auto p-6">
+                <div className="h-full overflow-y-auto p-4">
                   <div className="prose prose-lg max-w-none">
-                    <h1 className="text-white text-3xl font-bold mb-6">{title || 'Untitled'}</h1>
+                    <h1 className="text-white text-2xl font-bold mb-4">{title || 'Untitled'}</h1>
                     <div
                       className="text-white/90 leading-relaxed prose-invert max-w-none"
                       dangerouslySetInnerHTML={{ __html: content }}
@@ -158,18 +158,18 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
                   </div>
                 </div>
               ) : (
-                <div className="h-full p-6">
+                <div className="h-full p-4">
                   {isHtmlMode ? (
                     <textarea
                       value={content}
                       onChange={e => setContent(e.target.value)}
-                      className="w-full h-full bg-gray-800 text-white p-4 font-mono border border-white/20 rounded"
+                      className="w-full h-full bg-gray-800 text-white p-3 font-mono border border-white/20 rounded text-sm"
                     />
                   ) : (
                     <RichTextEditor
                       value={content}
                       onChange={setContent}
-                      height={700}
+                      height={window.innerHeight - 300}
                       placeholder="Mulai menulis halaman Anda..."
                     />
                   )}
@@ -179,28 +179,28 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
           </div>
 
           {/* Sidebar */}
-          <div className="w-72 border-l border-white/10 p-6 overflow-y-auto">
-            <div className="mb-6">
-              <h3 className="text-white font-semibold mb-3 flex items-center">
-                <Calendar className="w-4 h-4 mr-2" />
+          <div className="w-56 border-l border-white/10 p-4 overflow-y-auto">
+            <div className="mb-4">
+              <h3 className="text-white font-medium mb-2 flex items-center text-sm">
+                <Calendar className="w-3 h-3 mr-1" />
                 Status
               </h3>
-              <div className="space-y-2">
-                <label className="flex items-center space-x-2 cursor-pointer">
+              <div className="space-y-1">
+                <label className="flex items-center space-x-2 cursor-pointer text-sm">
                   <input
                     type="radio"
                     checked={isDraft}
                     onChange={() => setIsDraft(true)}
-                    className="text-purple-500"
+                    className="text-purple-500 w-3 h-3"
                   />
                   <span className="text-white/80">Draft</span>
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className="flex items-center space-x-2 cursor-pointer text-sm">
                   <input
                     type="radio"
                     checked={!isDraft}
                     onChange={() => setIsDraft(false)}
-                    className="text-purple-500"
+                    className="text-purple-500 w-3 h-3"
                   />
                   <span className="text-white/80">Publish</span>
                 </label>

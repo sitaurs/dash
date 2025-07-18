@@ -20,10 +20,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     onChange(content);
   };
 
+  // Get API key from environment variable
+  const apiKey = import.meta.env.VITE_TINYMCE_API_KEY || "qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc";
+
   return (
     <div className="rich-text-editor">
       <Editor
-        apiKey="qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc" // Free TinyMCE API key
+        apiKey={apiKey}
         onInit={(evt, editor) => editorRef.current = editor}
         value={value}
         onEditorChange={handleEditorChange}
@@ -31,19 +34,21 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           height: height,
           menubar: true,
           plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount', 'emoticons',
-            'template', 'codesample', 'hr', 'pagebreak', 'nonbreaking',
-            'toc', 'imagetools', 'textpattern', 'noneditable', 'quickbars',
-            'powerpaste', 'advcode', 'visualchars', 'wordcount', 'autosave'
+            // Core editing features
+            'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 
+            'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 
+            'wordcount', 'code', 'fullscreen', 'preview', 'help',
+            // Additional useful plugins
+            'advlist', 'insertdatetime', 'hr', 'pagebreak', 'nonbreaking',
+            'textpattern', 'quickbars', 'autosave', 'save'
           ],
           toolbar: [
-            'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor',
-            'alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist',
-            'link image media table | code codesample | emoticons charmap | insertdatetime hr pagebreak',
-            'searchreplace visualblocks visualchars | fullscreen preview print | help'
-          ].join(' | '),
+            'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough',
+            'forecolor backcolor | alignleft aligncenter alignright alignjustify',
+            'outdent indent | numlist bullist | link image media table',
+            'code codesample | emoticons charmap | insertdatetime hr',
+            'searchreplace visualblocks | fullscreen preview | help'
+          ],
           content_style: `
             body { 
               font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
@@ -150,6 +155,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           paste_data_images: true,
           automatic_uploads: true,
           file_picker_types: 'image',
+          
+          // Enhanced toolbar configuration
+          toolbar_mode: 'sliding',
+          toolbar_sticky: true,
+          toolbar_sticky_offset: 0,
           
           // Enhanced image upload configuration
           file_picker_callback: (callback, value, meta) => {
