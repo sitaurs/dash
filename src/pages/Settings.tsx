@@ -4,6 +4,7 @@ import { Globe, User, Shield, RefreshCw, CheckCircle, AlertCircle, ExternalLink,
 import { useBlog } from '../contexts/BlogContext';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import { useModal } from '../contexts/ModalContext';
 
 interface OAuthStatus {
   isAuthorized: boolean;
@@ -22,6 +23,7 @@ const Settings: React.FC = () => {
   const [oauthStatus, setOAuthStatus] = useState<OAuthStatus | null>(null);
   const [loadingOAuth, setLoadingOAuth] = useState(false);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
+  const { alert } = useModal();
 
   interface Tab {
     id: 'blog' | 'oauth' | 'admin';
@@ -56,7 +58,7 @@ const Settings: React.FC = () => {
       const response = await axios.get('/api/admin/oauth/url');
       setAuthUrl(response.data.authUrl);
     } catch (error: any) {
-      alert('Failed to generate authorization URL: ' + (error.response?.data?.message || error.message));
+      await alert('Failed to generate authorization URL: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoadingOAuth(false);
     }
@@ -74,9 +76,9 @@ const Settings: React.FC = () => {
     }
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     // This would open a password change modal
-    alert('Password change functionality would be implemented here');
+    await alert('Password change functionality would be implemented here');
   };
 
   return (

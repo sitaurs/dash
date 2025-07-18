@@ -4,6 +4,7 @@ import { Search, Filter, Plus, Edit, Trash2, Eye, Calendar, AlertCircle } from '
 import { usePosts, useDeletePost } from '../hooks/useApi';
 import PostEditor from '../components/PostEditor';
 import { useLoading } from '../contexts/LoadingContext';
+import { useModal } from '../contexts/ModalContext';
 
 const Posts: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,6 +14,7 @@ const Posts: React.FC = () => {
   const [editingPostId, setEditingPostId] = useState<string | undefined>();
   const postsPerPage = 10;
   const { show, hide } = useLoading();
+  const { alert, confirm } = useModal();
 
   const { data: postsData, isLoading, error, refetch } = usePosts({
     page: currentPage,
@@ -24,16 +26,16 @@ const Posts: React.FC = () => {
   const deletePostMutation = useDeletePost();
 
   const handleDelete = async (postId: string) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus postingan ini?')) {
-      try {
-        show();
-        await deletePostMutation.mutateAsync(postId);
-        alert('Postingan berhasil dihapus');
-      } catch (error) {
-        alert('Gagal menghapus postingan');
-      } finally {
-        hide();
-      }
+    const confirmed = await confirm('Apakah Anda yakin ingin menghapus postingan ini?');
+    if (!confirmed) return;
+    try {
+      show();
+      await deletePostMutation.mutateAsync(postId);
+      await alert('Postingan berhasil dihapus');
+    } catch (error) {
+      await alert('Gagal menghapus postingan');
+    } finally {
+      hide();
     }
   };
 

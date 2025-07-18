@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { BlogProvider } from './contexts/BlogContext';
 import { LoadingProvider } from './contexts/LoadingContext';
+import { ModalProvider } from './contexts/ModalContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -29,9 +30,10 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BlogProvider>
-          <LoadingProvider>
+      <ModalProvider>
+        <AuthProvider>
+          <BlogProvider>
+            <LoadingProvider>
             <Router>
             <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-400">
               <Routes>
@@ -90,9 +92,10 @@ function App() {
               </Routes>
             </div>
             </Router>
-          </LoadingProvider>
-        </BlogProvider>
-      </AuthProvider>
+            </LoadingProvider>
+          </BlogProvider>
+        </AuthProvider>
+      </ModalProvider>
     </QueryClientProvider>
   );
 }
