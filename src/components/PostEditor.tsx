@@ -177,9 +177,9 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
             </div>
 
             {/* Editor/Preview */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden flex flex-col">
               {isPreview ? (
-                <div className="h-full overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-4">
                   <div className="prose prose-lg max-w-none">
                     <h1 className="text-white text-2xl font-bold mb-4">{title || 'Untitled'}</h1>
                     <div
@@ -189,19 +189,19 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
                   </div>
                 </div>
               ) : (
-                <div className="h-full p-4">
+                <div className="flex-1 p-4 flex flex-col overflow-hidden">
                   {isHtmlMode ? (
                     <textarea
                       value={content}
                       onChange={e => setContent(e.target.value)}
-                      className="w-full h-full bg-gray-800 text-white p-3 font-mono border border-white/20 rounded text-sm"
+                      className="w-full flex-1 bg-gray-800 text-white p-3 font-mono border border-white/20 rounded text-sm"
                     />
                   ) : (
                     <RichTextEditor
                       value={content}
                       onChange={setContent}
-                      height={window.innerHeight - 300}
                       placeholder="Mulai menulis postingan Anda..."
+                      className="flex-1"
                     />
                   )}
                 </div>
@@ -210,7 +210,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ postId, isOpen, onClose, onSave
           </div>
 
           {/* Sidebar */}
-          <div className="w-64 border-l border-white/10 p-4 overflow-y-auto">
+          <div className="w-48 border-l border-white/10 p-4 overflow-y-auto">
             {/* Status */}
             <div className="mb-4">
               <h3 className="text-white font-medium mb-2 flex items-center text-sm">

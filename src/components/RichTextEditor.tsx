@@ -5,15 +5,19 @@ import { Editor } from '@tinymce/tinymce-react';
 interface RichTextEditorProps {
   value: string;
   onChange: (content: string) => void;
-  height?: number;
   placeholder?: string;
+  /**
+   * Optional className to allow the editor container to flexibly
+   * fill available space when used inside flex layouts.
+   */
+  className?: string;
 }
 
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
-  height = 400,
-  placeholder = "Mulai menulis..."
+  placeholder = "Mulai menulis...",
+  className = ''
 }) => {
   const editorRef = useRef<any>(null);
   const { alert } = useModal();
@@ -26,14 +30,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const apiKey = import.meta.env.VITE_TINYMCE_API_KEY || "qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc";
 
   return (
-    <div className="rich-text-editor">
+    <div className={`rich-text-editor h-full flex flex-col ${className}`}>
       <Editor
         apiKey={apiKey}
         onInit={(evt, editor) => editorRef.current = editor}
         value={value}
         onEditorChange={handleEditorChange}
-        init={{
-          height: height,
+          init={{
+            height: '100%',
           menubar: true,
           plugins: [
             // Core editing features
