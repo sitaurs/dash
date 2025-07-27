@@ -165,19 +165,19 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
                   </div>
                 </div>
               ) : (
-                <div className="h-full p-4">
+                <div className="flex-1 p-4 flex flex-col overflow-hidden">
                   {isHtmlMode ? (
                     <textarea
                       value={content}
                       onChange={e => setContent(e.target.value)}
-                      className="w-full h-full bg-gray-800 text-white p-3 font-mono border border-white/20 rounded text-sm"
+                      className="w-full flex-1 bg-gray-800 text-white p-3 font-mono border border-white/20 rounded text-sm"
                     />
                   ) : (
                     <RichTextEditor
                       value={content}
                       onChange={setContent}
-                      height={window.innerHeight - 300}
                       placeholder="Mulai menulis halaman Anda..."
+                      className="flex-1"
                     />
                   )}
                 </div>
@@ -186,7 +186,7 @@ const PageEditor: React.FC<PageEditorProps> = ({ pageId, isOpen, onClose, onSave
           </div>
 
           {/* Sidebar */}
-          <div className="w-56 border-l border-white/10 p-4 overflow-y-auto">
+          <div className="w-48 border-l border-white/10 p-4 overflow-y-auto">
             <div className="mb-4">
               <h3 className="text-white font-medium mb-2 flex items-center text-sm">
                 <Calendar className="w-3 h-3 mr-1" />
